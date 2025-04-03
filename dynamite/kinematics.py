@@ -313,7 +313,9 @@ class GaussHermite(Kinematics, data.Integrated):
         """
         max_gh = self.get_highest_order_gh_coefficient()
         gh_cols = ['v', 'dv', 'sigma', 'dsigma']
-        gh_cols += [f'{d}h{i}' for i in range(3, max_gh + 1) for d in ('','d')]
+        # Handle the case when max_gh is None (no h3, h4 parameters in the data)
+        if max_gh is not None and max_gh >= 3:
+            gh_cols += [f'{d}h{i}' for i in range(3, max_gh + 1) for d in ('','d')]
         pop_cols = [c for c in self.data.colnames[1:] if c not in gh_cols]
         self.data.remove_columns(pop_cols)
         has_pops = len(pop_cols) > 0
